@@ -10,7 +10,7 @@ services:
     runtime: python
     rootDir: backend
     buildCommand: ./build.sh
-    startCommand: python -m gunicorn api.asgi:application -k uvicorn.workers.UvicornWorker
+    startCommand: python -m gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -19,24 +19,15 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: FRONTEND_ORIGIN
-        value: ""   # Iu-update mo ito pag-live na ang frontend
+        value: ""  # set mo 'to after live ang frontend
 
-  # === React Frontend ===
+  # === React (Vite) ===
   - type: web
     name: crms-frontend
     runtime: static
     rootDir: frontend
-
-    # Piliin lang ang isa:
-
-    # --- Vite ---
     buildCommand: VITE_API_BASE=https://crms-api.onrender.com npm ci && npm run build
     staticPublishPath: dist
-
-    # --- CRA ---
-    buildCommand: REACT_APP_API_BASE=https://crms-api.onrender.com npm ci && npm run build
-    staticPublishPath: build
-
     routes:
       - type: rewrite
         source: /*
